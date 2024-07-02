@@ -25,6 +25,7 @@
 #include "flusher/FlusherSLS.h"
 #include "go_pipeline/LogtailPlugin.h"
 #include "input/InputFeedbackInterfaceRegistry.h"
+#include "input/InputPrometheus.h"
 #include "plugin/PluginRegistry.h"
 #include "processor/ProcessorParseApsaraNative.h"
 #include "queue/ProcessQueueManager.h"

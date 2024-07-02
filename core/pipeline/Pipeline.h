@@ -26,6 +26,7 @@
 #include "config/Config.h"
 #include "input/InputContainerStdio.h"
 #include "input/InputFile.h"
+#include "input/InputPrometheus.h"
 #include "models/PipelineEventGroup.h"
 #include "pipeline/PipelineContext.h"
 #include "plugin/instance/FlusherInstance.h"
@@ -78,6 +79,7 @@ private:
     friend class PipelineMock;
     friend class PipelineUnittest;
     friend class InputFileUnittest;
+    friend class InputPrometheusUnittest;
     friend class ProcessorTagNativeUnittest;
     friend class InputEBPFFileSecurityUnittest;
     friend class InputEBPFProcessSecurityUnittest;

@@ -64,6 +64,10 @@ public:
     void SetTagNoCopy(StringView key, StringView val);
     void DelTag(StringView key);
 
+    std::map<StringView, StringView>::const_iterator LabelsBegin() const { return mTags.mInner.begin(); }
+    std::map<StringView, StringView>::const_iterator LabelsEnd() const { return mTags.mInner.end(); }
+    size_t LabelsSize() const { return mTags.mInner.size(); }
+
     size_t DataSize() const override;
 
 

@@ -26,9 +26,12 @@
 #include "app_config/AppConfig.h"
 #include "flusher/FlusherArmsMetrics.h"
 #include "flusher/FlusherXTrace.h"
+#include "flusher/FlusherPushGateway.h"
+#include "flusher/FlusherRemoteWrite.h"
 #include "flusher/FlusherSLS.h"
 #include "input/InputContainerStdio.h"
 #include "input/InputFile.h"
+#include "input/InputPrometheus.h"
 #if defined(__linux__) && !defined(__ANDROID__)
 #include "input/InputEBPFFileObserver.h"
 #include "input/InputEBPFFileSecurity.h"
@@ -56,6 +59,7 @@
 #include "processor/ProcessorParseTimestampNative.h"
 #include "processor/inner/ProcessorMergeMultilineLogNative.h"
 #include "processor/inner/ProcessorParseContainerLogNative.h"
+#include "processor/inner/ProcessorRelabelMetricNative.h"
 #include "processor/inner/ProcessorSplitLogStringNative.h"
 #include "processor/inner/ProcessorSplitMultilineLogStringNative.h"
 #include "processor/inner/ProcessorTagNative.h"
@@ -124,6 +128,7 @@ bool PluginRegistry::IsValidNativeFlusherPlugin(const string& name) const {
 
 void PluginRegistry::LoadStaticPlugins() {
     RegisterInputCreator(new StaticInputCreator<InputFile>());
+    RegisterInputCreator(new StaticInputCreator<InputPrometheus>());
 #if defined(__linux__) && !defined(__ANDROID__)
     RegisterInputCreator(new StaticInputCreator<InputContainerStdio>());
     RegisterInputCreator(new StaticInputCreator<InputEBPFFileObserver>());
@@ -138,6 +143,7 @@ void PluginRegistry::LoadStaticPlugins() {
 #endif
 #endif
 
+    RegisterProcessorCreator(new StaticProcessorCreator<ProcessorRelabelMetricNative>());
     RegisterProcessorCreator(new StaticProcessorCreator<ProcessorSplitLogStringNative>());
     RegisterProcessorCreator(new StaticProcessorCreator<ProcessorSplitMultilineLogStringNative>());
     RegisterProcessorCreator(new StaticProcessorCreator<ProcessorMergeMultilineLogNative>());
@@ -158,12 +164,17 @@ void PluginRegistry::LoadStaticPlugins() {
 #endif
 
     RegisterFlusherCreator(new StaticFlusherCreator<FlusherSLS>());
+  
+    LOG_INFO(sLogger, ("FlusherPushGateway info", "start load FlusherPushGateway flusher"));
+    RegisterFlusherCreator(new StaticFlusherCreator<FlusherPushGateway>());
+  
     LOG_INFO(sLogger, ("FlusherArmsMetrics info", "start load FlusherArmsMetrics flusher"));
-
     RegisterFlusherCreator(new StaticFlusherCreator<FlusherArmsMetrics>());
 
     LOG_INFO(sLogger, ("FlusherXTraceSpan info", "start load FlusherXTraceSpan flusher"));
     RegisterFlusherCreator(new StaticFlusherCreator<FlusherXTraceSpan>());
+    RegisterFlusherCreator(new StaticFlusherCreator<FlusherPushGateway>());
+    RegisterFlusherCreator(new StaticFlusherCreator<FlusherRemoteWrite>());
 }
 
 void PluginRegistry::LoadDynamicPlugins(const set<string>& plugins) {
